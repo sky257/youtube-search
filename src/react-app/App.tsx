@@ -7,13 +7,17 @@ function App() {
 	const [query, setQuery] = useState("");
 	const [suggestions, setSuggestions] = useState<string[]>([]);
 	const [showSuggestions, setShowSuggestions] = useState(false);
+	const [selectedIndex, setSelectedIndex] = useState(-1);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			if (query.trim()) {
 				fetch(`/api/suggestions?q=${encodeURIComponent(query)}`)
 					.then((res) => res.json())
-					.then((data) => setSuggestions(data))
+					.then((data) => {
+						setSuggestions(data);
+						setSelectedIndex(-1); // Reset selection on new results
+					})
 					.catch((err) => console.error(err));
 			} else {
 				setSuggestions([]);
@@ -36,6 +40,28 @@ function App() {
 		setQuery(suggestion);
 		handleSearch({ preventDefault: () => {} } as React.FormEvent, suggestion);
 		setShowSuggestions(false);
+	};
+
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		if (!showSuggestions || suggestions.length === 0) return;
+
+		if (e.key === "ArrowDown") {
+			e.preventDefault();
+			setSelectedIndex((prev) =>
+				prev < suggestions.length - 1 ? prev + 1 : prev
+			);
+		} else if (e.key === "ArrowUp") {
+			e.preventDefault();
+			setSelectedIndex((prev) => (prev > -1 ? prev - 1 : -1));
+		} else if (e.key === "Enter") {
+			if (selectedIndex >= 0) {
+				e.preventDefault();
+				handleSuggestionClick(suggestions[selectedIndex]);
+			}
+		} else if (e.key === "Escape") {
+			setShowSuggestions(false);
+			setSelectedIndex(-1);
+		}
 	};
 
 	return (
@@ -80,18 +106,20 @@ function App() {
                                 setShowSuggestions(true);
                             }}
                             onFocus={() => setShowSuggestions(true)}
+							onKeyDown={handleKeyDown}
 							placeholder="Search"
 							autoFocus
 						/>
 					</div>
                     {showSuggestions && suggestions.length > 0 && (
                         <ul className="suggestions-list">
-                            {suggestions.map((suggestion, index) => (
-                                <li
-                                    key={index}
-                                    className="suggestion-item"
-                                    onClick={() => handleSuggestionClick(suggestion)}
-                                >
+								{suggestions.map((suggestion, index) => (
+									<li
+										key={index}
+										className={`suggestion-item ${index === selectedIndex ? 'selected' : ''}`}
+										onClick={() => handleSuggestionClick(suggestion)}
+										onMouseEnter={() => setSelectedIndex(index)}
+									>
                                     <svg 
                                         className="suggestion-icon" 
                                         xmlns="http://www.w3.org/2000/svg" 
