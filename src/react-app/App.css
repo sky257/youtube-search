@@ -68,40 +68,36 @@ body {
   margin-bottom: 2.5rem;
   font-weight: 700;
   letter-spacing: -3px;
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.youtube-logo {
+  height: 60px;
+  width: auto;
+}
+
+.youtube-text {
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-weight: 700;
+  letter-spacing: -2px;
+  color: #fff;
+  margin-right: 5px;
+  position: relative;
+  top: -2px;
+}
+
+.search-text {
   background: linear-gradient(135deg, #ffffff 30%, #a0a0a0 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.youtube-color {
-  background: linear-gradient(135deg, #ff0000 0%, #ff4b4b 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-  margin-right: 15px;
-  position: relative;
-}
-
-/* Add a play button icon hint with CSS */
-.youtube-color::after {
-  content: '';
-  position: absolute;
-  top: 55%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 120%;
-  height: 120%;
-  background: radial-gradient(circle, rgba(255, 0, 0, 0.4) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  z-index: -1;
-}
-
-.title:hover .youtube-color::after {
-  opacity: 1;
 }
 
 .search-form {
