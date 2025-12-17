@@ -39,6 +39,46 @@ body {
   padding-top: 10vh;
 }
 
+/* When suggestions are active, flatten bottom corners and remove bottom border */
+/* Moved active suggestion styles to bottom to ensure they override focus states */
+
+.suggestions-list {
+  background-color: white;
+  color: #000; /* Explicit black color */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Match subtle border */
+  border-top: none;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  /* Removed negative margin and absolute positioning */
+  overflow: hidden;
+}
+
+.suggestion-item {
+  padding: 10px 24px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #000; /* Ensure text is black */
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+.suggestion-icon {
+  width: 20px;
+  height: 20px;
+  fill: #aaa;
+}
+
 /* Background blob for extra atmosphere */
 .container::before {
   content: '';
@@ -75,6 +115,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .youtube-logo {
@@ -109,6 +151,8 @@ body {
 }
 
 .search-input-wrapper {
+  position: relative;
+  z-index: 20; /* Ensure it stays above suggestions */
   display: flex;
   align-items: center;
   width: 100%;
@@ -222,4 +266,31 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Active State Styles - Must be at the bottom to override :focus-within */
+.search-input-wrapper.has-suggestions {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); 
+  background: white !important; /* Force white background */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-input-wrapper.has-suggestions:focus-within {
+    background: white; /* Override default focus background */
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+}
+
+.search-input-wrapper.has-suggestions .search-input {
+  color: #000;
+}
+
+.search-input-wrapper.has-suggestions .search-icon {
+    fill: #5f6368;
+}
+
+.search-input-wrapper.has-suggestions:focus-within .search-icon {
+    fill: #5f6368; /* Keep grey icon even when focused */
 }

@@ -1,25 +1,48 @@
 // src/App.tsx
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
 	const [query, setQuery] = useState("");
+	const [suggestions, setSuggestions] = useState<string[]>([]);
+	const [showSuggestions, setShowSuggestions] = useState(false);
 
-	const handleSearch = (e: React.FormEvent) => {
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			if (query.trim()) {
+				fetch(`/api/suggestions?q=${encodeURIComponent(query)}`)
+					.then((res) => res.json())
+					.then((data) => setSuggestions(data))
+					.catch((err) => console.error(err));
+			} else {
+				setSuggestions([]);
+			}
+		}, 300);
+
+		return () => clearTimeout(timer);
+	}, [query]);
+
+	const handleSearch = (e: React.FormEvent, searchQuery = query) => {
 		e.preventDefault();
-		if (query.trim()) {
+		if (searchQuery.trim()) {
 			window.location.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(
-				query
+				searchQuery
 			)}`;
 		}
 	};
 
+	const handleSuggestionClick = (suggestion: string) => {
+		setQuery(suggestion);
+		handleSearch({ preventDefault: () => {} } as React.FormEvent, suggestion);
+		setShowSuggestions(false);
+	};
+
 	return (
-		<div className="container">
-			<div className="content-wrapper">
+		<div className="container" onClick={() => setShowSuggestions(false)}>
+			<div className="content-wrapper" onClick={(e) => e.stopPropagation()}>
 				<h1 className="title">
-					<div className="logo-wrapper">
+					<a href="https://www.youtube.com" className="logo-wrapper">
 						<svg
 							viewBox="0 0 68 48"
 							className="youtube-logo"
@@ -36,10 +59,10 @@ function App() {
 						</svg>
 						<span className="youtube-text">YouTube</span>
 						<span className="search-text">Search</span>
-					</div>
+					</a>
 				</h1>
-				<form onSubmit={handleSearch} className="search-form">
-					<div className="search-input-wrapper">
+				<form onSubmit={(e) => handleSearch(e)} className="search-form">
+					<div className={`search-input-wrapper ${showSuggestions && suggestions.length > 0 ? 'has-suggestions' : ''}`}>
 						<svg
 							className="search-icon"
 							focusable="false"
@@ -52,11 +75,36 @@ function App() {
 							type="text"
 							className="search-input"
 							value={query}
-							onChange={(e) => setQuery(e.target.value)}
+							onChange={(e) => {
+                                setQuery(e.target.value);
+                                setShowSuggestions(true);
+                            }}
+                            onFocus={() => setShowSuggestions(true)}
 							placeholder="Search"
 							autoFocus
 						/>
 					</div>
+                    {showSuggestions && suggestions.length > 0 && (
+                        <ul className="suggestions-list">
+                            {suggestions.map((suggestion, index) => (
+                                <li
+                                    key={index}
+                                    className="suggestion-item"
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                >
+                                    <svg 
+                                        className="suggestion-icon" 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                                    </svg>
+                                    {suggestion}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
 					<div className="button-group">
 						<button type="submit" className="search-button">
 							YouTube Search
