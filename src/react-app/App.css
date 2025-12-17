@@ -42,22 +42,7 @@ body {
 /* When suggestions are active, flatten bottom corners and remove bottom border */
 /* Moved active suggestion styles to bottom to ensure they override focus states */
 
-.suggestions-list {
-  background-color: white;
-  color: #000; /* Explicit black color */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Match subtle border */
-  border-top: none;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  text-align: left;
-  /* Removed negative margin and absolute positioning */
-  overflow: hidden;
-}
+/* Old suggestions-list style removed - see bottom of file */
 
 .suggestion-item {
   padding: 10px 24px;
@@ -270,13 +255,42 @@ body {
   }
 }
 
-/* Active State Styles - Must be at the bottom to override :focus-within */
+/* Active State Styles */
 .search-input-wrapper.has-suggestions {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); 
-  background: white !important; /* Force white background */
+  /* Keep the original rounded shape */
+  border-radius: 28px;
+  border: 1px solid rgba(0, 0, 0, 0.1); 
+  background: white !important; /* Keep white background for readability */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Global box-sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+.search-box-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.suggestions-list {
+  background-color: white;
+  color: #000;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 24px; /* Fully rounded corners */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  list-style: none;
+  padding: 12px 0;
+  margin: 0;
+  width: 100%;
+  margin-top: 4px; /* Reduced gap */
+  z-index: 10;
+  text-align: left;
+  overflow: hidden;
 }
 
 .search-input-wrapper.has-suggestions:focus-within {
